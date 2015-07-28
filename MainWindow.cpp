@@ -64,8 +64,8 @@ void MainWindow::onStartExtract()
 
     if (file.open(QIODevice::ReadOnly))
     {
-        QByteArray data(file.readAll());
-        file.close();
+        uchar *raw = file.map(0, file.size());
+        QByteArray data((const char*)raw, file.size());
 
         QByteArray startMatch("\x89PNG");
         QByteArray endMatch("IEND""\xae""B""\x60");
@@ -97,5 +97,9 @@ void MainWindow::onStartExtract()
             ui->progressBar->setValue(start);
         }
 
+        ui->progressBar->setValue(0);
+
+        file.unmap(raw);
+        file.close();
     }
 }
